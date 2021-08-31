@@ -1,6 +1,6 @@
 # Volto Leaflet Block
 
-![screenshot](https://user-images.githubusercontent.com/9050997/131229104-b4e37d7a-199d-4690-b043-e5c8f8738bde.png)
+![screenshot](https://user-images.githubusercontent.com/9050997/131230905-9c5fe07c-834b-4e88-a031-387ee8d59b6e.png)
 
 ## Overview
 
@@ -17,16 +17,16 @@ In your `package.json` file:
 ### Minimal
 ```JSON
 "addons": [
-"@adeweb-be/volto-leaflet-block:minimal"
+  "@adeweb-be/volto-leaflet-block:minimal"
 ],
 ```
 This will install the minimum config for this addon.
 
 ### Base
 ```JSON
-"addons": [
-"@adeweb-be/volto-leaflet-block"
-],
+  "addons": [
+    "@adeweb-be/volto-leaflet-block"
+  ],
 ```
 This will install the minimum config + some preset markers.
 
@@ -63,11 +63,11 @@ If you already have a Volto project, just update `package.json`:
 
 ```JSON
 "addons": [
-    "@adeweb-be/volto-leaflet-block"
+  "@adeweb-be/volto-leaflet-block"
 ],
 
 "dependencies": {
-    "@adeweb-be/volto-leaflet-block": "*"
+  "@adeweb-be/volto-leaflet-block": "*"
 }
 ```
 
