@@ -65,8 +65,9 @@ const leafletMapConfig = {
       iconAnchor: [20, 40],
     },
   },
-  tilesLayerUrl: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-  tilesLayerAttribution: "&copy; <a href=\"http://osm.org/copyright\">OpenStreetMap</a> contributors"
+  tilesLayerUrl: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+  tilesLayerAttribution:
+    '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
 };
 
 export function minimal(config) {

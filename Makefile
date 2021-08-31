@@ -15,8 +15,8 @@ project:
 	npm install -g @plone/generator-volto
 	npm install -g mrs-developer
 	yo @plone/volto project --addon ${ADDON} --workspace "src/addons/${DIR}" --no-interactive
-	ln -sf $$(pwd) project/src/addons/
-	cp .project.eslintrc.js .eslintrc.js
+	cp .project.package.json project/package.json
+	make link
 	cd project && yarn
 	@echo "-------------------"
 	@echo "$(GREEN)Volto project is ready!$(RESET)"
@@ -24,10 +24,14 @@ project:
 
 all: project
 
+.PHONY: link
+link: ## Setup symlink to project's addon
+	./scripts/symlink.sh
+
 .PHONY: start-test-backend
 start-test-backend: ## Start Test Plone Backend
 	@echo "$(GREEN)==> Start Test Plone Backend$(RESET)"
-	docker run -i --rm -e ZSERVER_HOST=0.0.0.0 -e ZSERVER_PORT=55001 -p 55001:55001 -e SITE=plone -e APPLY_PROFILES=plone.app.contenttypes:plone-content,plone.restapi:default,kitconcept.volto:default-homepage -e CONFIGURE_PACKAGES=plone.app.contenttypes,plone.restapi,kitconcept.volto,kitconcept.volto.cors -e ADDONS='plone.app.robotframework plone.app.contenttypes plone.restapi kitconcept.volto' plone ./bin/robot-server plone.app.robotframework.testing.PLONE_ROBOT_TESTING
+	docker run -d --rm --name=plone -p 8080:8080 -e SITE=Plone -e APPLY_PROFILES=plone.app.contenttypes:plone-content,plone.restapi:default,kitconcept.volto:default-homepage -e CONFIGURE_PACKAGES=plone.app.contenttypes,plone.restapi,kitconcept.volto,kitconcept.volto.cors -e ADDONS='plone.app.contenttypes plone.restapi kitconcept.volto' plone fg
 
 .PHONY: start-backend-docker
 start-backend-docker:		## Starts a Docker-based backend

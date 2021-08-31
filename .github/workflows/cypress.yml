@@ -1,0 +1,75 @@
+name: Cypress tests
+on: [ push ]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [ 14.x ]
+    env:
+      GIT_NAME: volto-leaflet-block
+      NAMESPACE: "@adeweb-be"
+      GIT_USER: 'duchenean'
+      GIT_BRANCH: ${GITHUB_REF##*/}
+    steps:
+      - name: Main checkout
+        uses: actions/checkout@v2
+
+      # Start Plone  
+      - name: Start Plone
+        run: make start-test-backend
+
+      # node setup
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      # node cache
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+      - uses: actions/cache@v1
+        id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
+      # node install
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Pull latest volto-addon-ci docker image
+        run: docker pull plone/volto-addon-ci
+
+      - name: Waiting for Plone...
+        run: yarn ci:wait-for-plone
+
+      # Acceptance tests
+      - name: Acceptance tests
+        run: docker run -i --link plone -e NODE_ENV=production -e RAZZLE_API_PATH="http://plone:8080/Plone" -e CYPRESS_BACKEND_HOST="plone" --name="cypress" -e NAMESPACE="${{env.NAMESPACE}}" -e DEPENDENCIES="" -e GIT_NAME=${{env.GIT_NAME}} -e GIT_USER=${{env.GIT_USER}} -e GIT_BRANCH=${{env.GIT_BRANCH}} plone/volto-addon-ci cypress
+
+      - name: Copy from docker screenshots on failure
+        run: docker cp cypress:/opt/frontend/my-volto-project/src/addons/${{env.GIT_NAME}}/cypress .
+        if: always()
+
+      - name: Delete Cypress docker on failure
+        run: docker rm -v cypress
+        if: always()
+
+      # Upload Cypress screenshots
+      - uses: actions/upload-artifact@v1
+        name: Upload screenshots on failure
+        if: failure()
+        with:
+          name: cypress-screenshots
+          path: cypress/screenshots
+      # Upload Cypress videos
+      - uses: actions/upload-artifact@v1
+        name: Upload cypress result videos
+        if: always()
+        with:
+          name: cypress-videos
+          path: cypress/videos

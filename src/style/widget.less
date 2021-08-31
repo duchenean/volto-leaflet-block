@@ -11,10 +11,11 @@
 .icon-select-widget {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
+
   .ui.card {
+    width: inherit;
     border: 1px solid white;
     margin: 0.25em !important;
-    width: inherit;
 
     &.active {
       border: 1px solid @primaryColor;

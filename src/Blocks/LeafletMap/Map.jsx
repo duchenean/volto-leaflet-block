@@ -10,7 +10,7 @@ const Map = (props) => {
   const { data } = props;
   const center = [parseFloat(data.latitude), parseFloat(data.longitude)];
   const zoom = parseInt(data.zoom);
-  const blockConfig = config.blocks.blocksConfig.leafletMap
+  const blockConfig = config.blocks.blocksConfig.leafletMap;
 
   const MapControl = React.memo(({ center, zoom }) => {
     const map = useMap();

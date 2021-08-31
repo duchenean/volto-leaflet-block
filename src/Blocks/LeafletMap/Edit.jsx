@@ -10,26 +10,24 @@ const Map = loadable(() => import('./Map'), {
 });
 
 const LeafletBlockEdit = (props) => {
-  const { block, data, selected } = props;
+  const { block, data, selected, onChangeBlock } = props;
 
   const intl = useIntl();
   const schema = ILeafletMapSchema(intl);
 
-  const prePopulateFields = (schema) => {
+  React.useEffect(() => {
+    const schema = ILeafletMapSchema(intl);
     const initialValues = {};
     Object.keys(schema.properties).forEach((key) => {
       if (schema.properties[key].hasOwnProperty('initialValue')) {
         initialValues[key] = schema.properties[key].initialValue;
       }
     });
-    props.onChangeBlock(block, {
+    onChangeBlock(block, {
       ...initialValues,
       ...data,
     });
-  };
-
-  React.useEffect(() => {
-    prePopulateFields(schema);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleChange = (id, value) => {
